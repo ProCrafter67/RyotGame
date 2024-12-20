@@ -7,6 +7,9 @@
 #define TITLE "Ryot Game"
 #define error(comment) std::cerr << "{ERROR}\t" << comment << std::endl;
 
+const char* vertexShaderSrc = "";
+const char* fragmentShaderSrc = "";
+
 void framebuffer_size_callback(GLFWwindow* window, int width, int height)
 {
 	glViewport(0, 0, width, height);
@@ -40,6 +43,22 @@ int main()
 	}
 
 	glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
+
+	// A Triangle
+
+	unsigned int program, vertexShader, fragmentShader;
+
+	vertexShader = glCreateShader(GL_VERTEX_SHADER);
+
+	glShaderSource(vertexShader, 1, &vertexShaderSrc, nullptr);
+
+	float vertices[] = {
+		-0.5f,-0.5f, 0.0f,
+		 0.0f, 0.5f, 0.0f,
+		 0.5f,-0.5f, 0.0f
+	};
+
+	unsigned int VAO, VBO;
 
 	while (!glfwWindowShouldClose(window))
 	{
