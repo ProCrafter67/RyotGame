@@ -14,10 +14,11 @@ const char* vertexShaderSrc = "#version 330 core\n"
 "gl_Position = vec4(pos, 1.0);\n"
 "}\0";
 
-const char* fragmentShaderSrc = "#version 330 core\n\n"
+const char* fragmentShaderSrc = "#version 330 core\n"
+"out vec4 FragColor;\n\n"
 "void main()\n"
 "{\n"
-"gl_FragColor = vec4(1.0, 0.0, 0.0, 1.0);\n"
+"FragColor = vec4(1.0, 0.0, 0.0, 1.0);\n"
 "}\0";
 
 void framebuffer_size_callback(GLFWwindow* window, int width, int height)
@@ -53,7 +54,7 @@ int main()
 		return -1;
 	}
 
-	// A Triangle
+	// A Rectangle
 
 	// Shader Creation
 	unsigned int program, vertexShader, fragmentShader;
@@ -105,11 +106,17 @@ int main()
 	// Vertex Creation
 	float vertices[] = {
 		-0.5f,-0.5f, 0.0f,
-		 0.0f, 0.5f, 0.0f,
+		-0.5f, 0.5f, 0.0f,
+		 0.5f, 0.5f, 0.0f,
 		 0.5f,-0.5f, 0.0f
 	};
 
-	unsigned int VAO, VBO;
+	int indices[] = {
+		0, 1, 2,
+		0, 3, 2
+	};
+
+	unsigned int VAO, VBO, EBO;
 
 	glGenVertexArrays(1, &VAO);
 	glBindVertexArray(VAO);
@@ -118,6 +125,10 @@ int main()
 	glBindBuffer(GL_ARRAY_BUFFER, VBO);
 	glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
 
+	glGenBuffers(1, &EBO);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
+	
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
 	glEnableVertexAttribArray(0);
 
@@ -133,7 +144,8 @@ int main()
 
 			glUseProgram(program);
 			glBindVertexArray(VAO);
-			glDrawArrays(GL_TRIANGLES, 0, 3);
+			glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+			glBindVertexArray(0);
 		}
 
 		glfwSwapBuffers(window);
@@ -142,6 +154,7 @@ int main()
 
 	glDeleteVertexArrays(1, &VAO);
 	glDeleteBuffers(1, &VBO);
+	glDeleteBuffers(1, &EBO);
 	glDeleteProgram(program);
 
 	glfwDestroyWindow(window);
